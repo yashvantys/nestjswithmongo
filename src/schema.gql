@@ -1,0 +1,87 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input AddressInput {
+  city: String!
+  country: String!
+  pincode: String!
+  state: String!
+  street: String!
+}
+
+type AddressType {
+  city: String!
+  country: String!
+  pincode: String!
+  state: String!
+  street: String!
+}
+
+input ContactInput {
+  email: String!
+  phone: String!
+}
+
+type ContactType {
+  email: String!
+  phone: String!
+}
+
+input CreateRestaurantInput {
+  address: AddressInput!
+  contact: ContactInput!
+  cuisine: [String!]!
+  isOpen: Boolean!
+  location: LocationInput!
+  name: String!
+  priceRange: String!
+  rating: Float!
+  reviewsCount: Int!
+}
+
+input LocationInput {
+  lat: Float!
+  long: Float!
+}
+
+type LocationType {
+  lat: Float!
+  long: Float!
+}
+
+type Mutation {
+  createRestaurant(input: CreateRestaurantInput!): RestaurantType!
+  deleteRestaurant(id: String!): Boolean!
+  updateRestaurant(id: String!, input: UpdateRestaurantInput!): RestaurantType!
+}
+
+type Query {
+  restaurant(id: String!): RestaurantType
+  restaurants: [RestaurantType!]!
+}
+
+type RestaurantType {
+  _id: ID!
+  address: AddressType!
+  contact: ContactType!
+  cuisine: [String!]!
+  isOpen: Boolean!
+  location: LocationType!
+  name: String!
+  priceRange: String!
+  rating: Float!
+  reviewsCount: Int!
+}
+
+input UpdateRestaurantInput {
+  address: AddressInput
+  contact: ContactInput
+  cuisine: [String!]
+  isOpen: Boolean
+  location: LocationInput
+  name: String
+  priceRange: String
+  rating: Float
+  reviewsCount: Int
+}

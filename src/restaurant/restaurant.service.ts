@@ -4,10 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { HydratedDocument, Model } from 'mongoose';
 import { Restaurant } from './schema/restaurant.schema';
-import { UpdateRestaurantDto } from './dtos/restaurant.dto';
-
+import { UpdateRestaurantDto } from './dtos/rest/restaurant.dto';
+type RestaurantDocument = HydratedDocument<Restaurant>;
 @Injectable()
 export class RestaurantService {
   constructor(
@@ -22,7 +22,7 @@ export class RestaurantService {
     }
   }
 
-  async getAllRestaurant(): Promise<Restaurant[]> {
+  async getAllRestaurant(): Promise<RestaurantDocument[]> {
     try {
       return await this.restaurantModel.find({}).exec();
     } catch (error) {

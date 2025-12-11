@@ -13,7 +13,7 @@ import {
   CreateRestaurantDto,
   IdParamDto,
   UpdateRestaurantDto,
-} from './dtos/restaurant.dto';
+} from './dtos/rest/restaurant.dto';
 import { Restaurant } from './schema/restaurant.schema';
 
 @Controller('restaurant')
