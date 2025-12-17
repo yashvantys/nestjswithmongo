@@ -17,7 +17,7 @@ export class RestaurantResolver {
     return this.restaurantService.getAllRestaurant();
   }
 
-  @Query(() => RestaurantType, { name: 'restaurant' })
+  @Query(() => RestaurantType)
   async getRestaurant(@Args('id') id: string) {
     const restaurant = await this.restaurantService.getRestaurantById(id);
     if (!restaurant) {
@@ -45,7 +45,7 @@ export class RestaurantResolver {
 
   @Mutation(() => Boolean)
   async deleteRestaurant(@Args('id') id: string) {
-    await this.restaurantService.deleteRestaurantBy(id);
+    await this.restaurantService.deleteRestaurantById(id);
     return true;
   }
 }

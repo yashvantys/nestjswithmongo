@@ -57,7 +57,7 @@ type Mutation {
 }
 
 type Query {
-  restaurant(id: String!): RestaurantType
+  getRestaurant(id: String!): RestaurantType!
   restaurants: [RestaurantType!]!
 }
 

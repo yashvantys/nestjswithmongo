@@ -33,8 +33,8 @@ export class RestaurantController {
     return this.restaurantService.getRestaurantById(param.id);
   }
   @Delete(':id')
-  deleteRestaurant(@Param('id') id: string): Promise<void> {
-    return this.restaurantService.deleteRestaurantBy(id);
+  deleteRestaurant(@Param('id') id: string): Promise<boolean> {
+    return this.restaurantService.deleteRestaurantById(id);
   }
 
   @Put(':id')

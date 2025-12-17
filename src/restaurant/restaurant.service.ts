@@ -1,61 +1,39 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { HydratedDocument, Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { Restaurant } from './schema/restaurant.schema';
 import { UpdateRestaurantDto } from './dtos/rest/restaurant.dto';
-type RestaurantDocument = HydratedDocument<Restaurant>;
+
 @Injectable()
 export class RestaurantService {
   constructor(
-    @InjectModel('Restaurant') private restaurantModel: Model<Restaurant>,
+    @InjectModel('Restaurant')
+    private readonly restaurantModel: Model<Restaurant>,
   ) {}
   async createRestaurant(data: Restaurant): Promise<Restaurant> {
-    try {
-      const response = await this.restaurantModel.create(data);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    return this.restaurantModel.create(data);
   }
 
-  async getAllRestaurant(): Promise<RestaurantDocument[]> {
-    try {
-      return await this.restaurantModel.find({}).exec();
-    } catch (error) {
-      throw error;
-    }
+  async getAllRestaurant(): Promise<Restaurant[]> {
+    return this.restaurantModel.find({}).lean().exec();
   }
+
   async getRestaurantById(id: string): Promise<Restaurant | null> {
-    try {
-      const response = await this.restaurantModel.findById(id).lean().exec();
-      if (!response) {
-        throw new NotFoundException(`Restaurant with id ${id} not found`);
-      }
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    return this.restaurantModel.findById(id).lean().exec();
   }
-  async deleteRestaurantBy(id: string): Promise<void> {
-    try {
-      const result = await this.restaurantModel.findByIdAndDelete(id).exec();
-      if (!result) {
-        throw new NotFoundException(`Restaurant with id ${id} not found`);
-      }
-    } catch (err) {
-      throw new InternalServerErrorException('Failed to delete restaurant');
-    }
-  }
+
   async updateRestaurant(
     id: string,
     data: UpdateRestaurantDto,
   ): Promise<Restaurant | null> {
     return this.restaurantModel
       .findByIdAndUpdate(id, data, { new: true })
+      .lean()
       .exec();
+  }
+
+  async deleteRestaurantById(id: string): Promise<boolean> {
+    const result = await this.restaurantModel.findByIdAndDelete(id).exec();
+    return !!result;
   }
 }
