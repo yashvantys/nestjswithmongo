@@ -1,12 +1,4 @@
-import {
-  Args,
-  ID,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { RestaurantService } from './restaurant.service';
 import {
   CreateRestaurantInput,
@@ -14,6 +6,7 @@ import {
 } from './dtos/graphql/restaurant.inputs';
 import { RestaurantType } from './dtos/graphql/restaurant.graphql';
 import { Restaurant } from './schema/restaurant.schema';
+import { NotFoundException } from '@nestjs/common';
 
 @Resolver(() => RestaurantType)
 export class RestaurantResolver {
@@ -24,9 +17,13 @@ export class RestaurantResolver {
     return this.restaurantService.getAllRestaurant();
   }
 
-  @Query(() => RestaurantType, { name: 'restaurant', nullable: true })
-  getRestaurant(@Args('id') id: string) {
-    return this.restaurantService.getRestaurantById(id);
+  @Query(() => RestaurantType, { name: 'restaurant' })
+  async getRestaurant(@Args('id') id: string) {
+    const restaurant = await this.restaurantService.getRestaurantById(id);
+    if (!restaurant) {
+      throw new NotFoundException(`Restaurant with id ${id} not found`);
+    }
+    return restaurant;
   }
 
   @Mutation(() => RestaurantType)
@@ -35,11 +32,15 @@ export class RestaurantResolver {
   }
 
   @Mutation(() => RestaurantType)
-  updateRestaurant(
+  async updateRestaurant(
     @Args('id') id: string,
     @Args('input') input: UpdateRestaurantInput,
   ) {
-    return this.restaurantService.updateRestaurant(id, input);
+    const updated = await this.restaurantService.updateRestaurant(id, input);
+    if (!updated) {
+      throw new NotFoundException(`Restaurant with id ${id} not found`);
+    }
+    return updated;
   }
 
   @Mutation(() => Boolean)

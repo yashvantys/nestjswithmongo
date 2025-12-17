@@ -18,7 +18,7 @@ export class RestaurantService {
       const response = await this.restaurantModel.create(data);
       return response;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
 
@@ -26,18 +26,18 @@ export class RestaurantService {
     try {
       return await this.restaurantModel.find({}).exec();
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
   async getRestaurantById(id: string): Promise<Restaurant | null> {
     try {
-      const response = await this.restaurantModel.findOne({ _id: id }).exec();
+      const response = await this.restaurantModel.findById(id).lean().exec();
       if (!response) {
         throw new NotFoundException(`Restaurant with id ${id} not found`);
       }
       return response;
     } catch (error) {
-      throw new Error(error);
+      throw error;
     }
   }
   async deleteRestaurantBy(id: string): Promise<void> {
@@ -54,16 +54,8 @@ export class RestaurantService {
     id: string,
     data: UpdateRestaurantDto,
   ): Promise<Restaurant | null> {
-    try {
-      const updated = await this.restaurantModel
-        .findByIdAndUpdate(id, data, { new: true })
-        .exec();
-      if (!updated) {
-        throw new NotFoundException(`Restaurant with id ${id} not found`);
-      }
-      return updated;
-    } catch (error) {
-      throw new InternalServerErrorException('Failed to update restaurant');
-    }
+    return this.restaurantModel
+      .findByIdAndUpdate(id, data, { new: true })
+      .exec();
   }
 }
