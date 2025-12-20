@@ -6,6 +6,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { AuthModule } from './auth/auth.module';
+import { UserService } from './user/user.service';
+import { UserController } from './user/user.controller';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -20,8 +24,10 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
       // If you want validation/transformation of inputs:
       // context, cors, subscriptions, etc. can be configured here
     }),
+    AuthModule,
+    UserModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, UserController],
+  providers: [AppService, UserService],
 })
 export class AppModule {}

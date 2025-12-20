@@ -50,9 +50,19 @@ type LocationType {
   long: Float!
 }
 
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type LoginResponse {
+  accessToken: String!
+}
+
 type Mutation {
   createRestaurant(input: CreateRestaurantInput!): RestaurantType!
   deleteRestaurant(id: String!): Boolean!
+  login(loginInput: LoginInput!): LoginResponse!
   updateRestaurant(id: String!, input: UpdateRestaurantInput!): RestaurantType!
 }
 
