@@ -11,3 +11,18 @@ export class LoginInput {
   @IsString()
   password: string;
 }
+@InputType()
+export class SignupInput {
+  @Field()
+  @IsEmail()
+  email: string;
+
+  @Field()
+  @IsString()
+  password: string;
+
+  @Field()
+  @IsString()
+  role: string;
+    
+}

@@ -63,6 +63,7 @@ type Mutation {
   createRestaurant(input: CreateRestaurantInput!): RestaurantType!
   deleteRestaurant(id: String!): Boolean!
   login(loginInput: LoginInput!): LoginResponse!
+  signup(signupInput: SignupInput!): SignupResponse!
   updateRestaurant(id: String!, input: UpdateRestaurantInput!): RestaurantType!
 }
 
@@ -82,6 +83,16 @@ type RestaurantType {
   priceRange: String!
   rating: Float!
   reviewsCount: Int!
+}
+
+input SignupInput {
+  email: String!
+  password: String!
+  role: String!
+}
+
+type SignupResponse {
+  id: String!
 }
 
 input UpdateRestaurantInput {

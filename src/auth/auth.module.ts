@@ -1,15 +1,14 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthService } from './auth.service';
 import { User, UserSchema } from 'src/user/schema/user.schema';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'dev_secret',
-    }),
+    forwardRef(() => UserModule),
+    JwtModule.register({ secret: 'dev_secret' }),
   ],
   providers: [AuthService],
   exports: [AuthService],
