@@ -69,6 +69,7 @@ type Mutation {
 
 type Query {
   getRestaurant(id: String!): RestaurantType!
+  profile: UserProfileResponse!
   restaurants: [RestaurantType!]!
 }
 
@@ -105,4 +106,9 @@ input UpdateRestaurantInput {
   priceRange: String
   rating: Float
   reviewsCount: Int
+}
+
+type UserProfileResponse {
+  email: String!
+  id: String!
 }

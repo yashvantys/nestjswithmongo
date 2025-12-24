@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { JwtAuthGuard } from './auth/jwt-auth/jwt-auth.guard';
 
 function flattenErrors(errors: any[], out: any[] = []) {
   for (const e of errors) {
@@ -25,6 +26,10 @@ function flattenErrors(errors: any[], out: any[] = []) {
 }
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Apply JWT guard globally
+  app.useGlobalGuards(app.get(JwtAuthGuard));
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

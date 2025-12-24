@@ -11,3 +11,10 @@ export class SignupResponse {
   @Field()
   id: string;  
 }
+@ObjectType()     
+export class UserProfileResponse {
+  @Field()
+  id: string; 
+  @Field()
+  email: string;  
+}   

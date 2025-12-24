@@ -21,6 +21,7 @@ import { UserModule } from './user/user.module';
       playground: true, // or set to false in prod
       sortSchema: true,
       path: '/graphql',
+      context: ({ req }) => ({ req }),
       // If you want validation/transformation of inputs:
       // context, cors, subscriptions, etc. can be configured here
     }),
