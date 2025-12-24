@@ -21,7 +21,7 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<JwtUser | null> {
-    const user = await this.userModel.findOne({ email });    
+    const user = await this.userModel.findOne({ email });
     if (!user) return null;
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -40,10 +40,17 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    return this.generateToken(user);
+    const [accessToken, refreshToken] = await Promise.all([
+      this.generateAccessToken(user),
+      this.generateRefreshToken(user),
+    ]);
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 
-  private async generateToken(
+  private async generateAccessToken(
     user: { id: string; email: string; role: string },
     expiresIn: StringValue | number = '15m',
   ) {
@@ -52,9 +59,12 @@ export class AuthService {
       email: user.email,
       role: user.role,
     } as JwtPayload;
-
-    return {
-      accessToken: await this.jwtService.signAsync(payload, { expiresIn }),
+    return await this.jwtService.signAsync(payload, { expiresIn });
+  }
+  private async generateRefreshToken(user: { id: string }) {
+    const payload = {
+      sub: user.id,
     };
+    return await this.jwtService.signAsync(payload, { expiresIn: '7d' });
   }
 }
