@@ -3,6 +3,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { LoginInput, SignupInput } from './dtos/graphql/user-input';
 import {
   LoginResponse,
+  LogoutResponse,
   SignupResponse,
   UserProfileResponse,
 } from './dtos/graphql/user-response.type';
@@ -36,5 +37,11 @@ export class UserResolver {
   async profile(@Context() context) {
     const userId = context.req.user.id;
     return await this.userService.getUserById(userId);
+  }
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => LogoutResponse)
+  async logout(@Context() context): Promise<LogoutResponse> {
+    const userId = context.req.user.id;
+    return this.authService.logout(userId);
   }
 }

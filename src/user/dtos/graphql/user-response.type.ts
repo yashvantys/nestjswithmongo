@@ -19,4 +19,9 @@ export class UserProfileResponse {
   id: string; 
   @Field()
   email: string;  
-}   
+}  
+@ObjectType()
+export class LogoutResponse {
+  @Field()
+  message: string;
+}

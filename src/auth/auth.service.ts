@@ -7,16 +7,19 @@ import { LoginDto } from '../user/dtos/login.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtPayload } from 'jsonwebtoken';
 import type { StringValue } from 'ms';
+import { UserToken } from 'src/user/schema/user-token.schema';
 
 interface JwtUser {
   id: string;
   email: string;
   role: string;
+  tokenVersion: number;
 }
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel('User') private readonly userModel: Model<User>,
+    @InjectModel('UserToken') private readonly userTokenModel: Model<UserToken>,
     private jwtService: JwtService,
   ) {}
 
@@ -31,6 +34,7 @@ export class AuthService {
       id: user._id.toString(),
       email: user.email,
       role: user.role,
+      tokenVersion: user.tokenVersion,
     };
   }
 
@@ -49,15 +53,21 @@ export class AuthService {
       refreshToken,
     };
   }
+  async logout(userId: string) {
+    await this.userModel.updateOne({ _id: userId }, { tokenVersion: 1 });
+    await this.userTokenModel.deleteOne({ userId });
+    return { message: 'Logged out successfully' };
+  }
 
   private async generateAccessToken(
-    user: { id: string; email: string; role: string },
+    user: { id: string; email: string; role: string; tokenVersion: number },
     expiresIn: StringValue | number = '15m',
   ) {
     const payload = {
       sub: user.id,
       email: user.email,
       role: user.role,
+      tokenVersion: user.tokenVersion,
     } as JwtPayload;
     return await this.jwtService.signAsync(payload, { expiresIn });
   }
@@ -65,6 +75,23 @@ export class AuthService {
     const payload = {
       sub: user.id,
     };
-    return await this.jwtService.signAsync(payload, { expiresIn: '7d' });
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      expiresIn: '7d',
+    });
+    await this.saveRefreshToken(user.id, refreshToken);
+    return refreshToken;
+  }
+
+  async saveRefreshToken(userId: string, refreshToken: string) {
+    const hash = await bcrypt.hash(refreshToken, 10);
+
+    await this.userTokenModel.findOneAndUpdate(
+      { userId },
+      {
+        refreshTokenHash: hash,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+      { upsert: true, new: true },
+    );
   }
 }
