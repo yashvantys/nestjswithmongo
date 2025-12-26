@@ -30,4 +30,9 @@ export class UserController {
     console.log(req.user);
     return await this.userService.getUserById(req.user.id);
   }
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  async logout(@Req() req) {
+    return await this.authService.logout(req.user.id);
+  }
 }
